@@ -14,17 +14,25 @@
       <option selected disabled>Select Algorithm:</option>
       <option id="bubble-sort" value="bubble">Bubble Sort</option>
       <option id="insertion-sort" value="insert">Insertion Sort</option>
+      <option id="selection-sort" value="select">Selection Sort</option>
+      <option id="merge-sort" value="merge">Merge Sort</option>
+      <option id="quick-sort" value="quick">Quick Sort</option>
     </select>
+
     <button id="chosen-sort">Sort</button>
     <div class="slider">
       <label id="bar-count-label" for="bar-slider">Bars: 12</label>
-      <input id="bar-slider" type="range" min="3" max="60" step="1">
+      <input id="bar-slider" type="range" min="3" max="250" step="1">
     </div>
     <div class="slider">
       <label id="speed-label" for="speed-slider">Delay: 15 ms</label>
       <input id="speed-slider" type="range" min="1" max="120" step="1">
     </div>
     <button id="btn-generate">Create New Values</button>
+
+    <div id="timer-config">
+      <h2 id="timer">Ready!</h2>
+    </div>
   </div>
   
   <div id="container"></div>
