@@ -1,0 +1,72 @@
+*{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body {
+  background-color: rgb(30, 58, 95);
+}
+
+#container{
+  display: flex;
+  border: 2px solid rgb(120, 120, 150);
+  background-color: rgb(150, 150, 180);
+  width: 100% - 6;
+  height: 420px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+hr {
+  color: rgb(120, 120, 150);
+}
+
+label {
+  font-size: 12px;
+}
+
+h1 {
+  color: white;
+  font-size: 250%;
+}
+
+.bar {
+  margin-top: auto;
+  background-color: rgb(35,35,80);
+  border: 1px solid lavender;
+  color: rgb(200, 200, 230);
+  width: 56px;
+  text-align: center;
+  align-items: center;
+  font-size: 12px;
+}
+
+#config {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.slider label {
+  font-size: .85rem;
+  color: white;
+  height: 10px;
+  letter-spacing: .045em;
+}
+
+input[type="range"] {
+  width: 180px;
+}
+
+.sorting {
+  background-color: maroon;
+}

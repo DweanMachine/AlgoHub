@@ -4,8 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AlgoHub</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <p>Welcome to AlgoHub!</p>
+  <h1>ALGO<span style="color:aquamarine">HUB</span></h1>
+  <hr>
+  <div id="config">
+    <select id="algorithms">
+      <option selected disabled>Select Algorithm:</option>
+      <option id="bubble-sort" value="bubble">Bubble Sort</option>
+      <option id="insertion-sort" value="insert">Insertion Sort</option>
+    </select>
+    <button id="chosen-sort">Sort</button>
+    <div class="slider">
+      <label id="bar-count-label" for="bar-slider">Bars: 12</label>
+      <input id="bar-slider" type="range" min="3" max="60" step="1">
+    </div>
+    <div class="slider">
+      <label id="speed-label" for="speed-slider">Delay: 15 ms</label>
+      <input id="speed-slider" type="range" min="1" max="120" step="1">
+    </div>
+    <button id="btn-generate">Create New Values</button>
+  </div>
+  
+  <div id="container"></div>
+  
+  <script src="code.js"></script>
 </body>
 </html>
