@@ -2,7 +2,11 @@
 let values = [];
 let delay = 15;
 let running = false;
+let algo = null;
+
+//List of elements
 const timer = document.getElementById("timer");
+const barContainer = document.getElementById("container");
 
 function adjustDelay() {
   delay = parseInt(document.getElementById('speed-slider').value);
@@ -13,7 +17,6 @@ function adjustDelay() {
 
 /* ── CREATE VALUES ─────────────────────────────── */
 function generateValues(barCount) {
-  const barContainer = document.getElementById("container");
   barContainer.replaceChildren();  
 
   const barLabel    = document.getElementById('bar-count-label');
@@ -65,13 +68,11 @@ async function bubbleSort() {
     let swapped = false;
     for (let j = 0; j < size - 1 - i; j++) {
       if (!running) return 0;
-      getBar(j+1).classList.add('sorting');
       if (values[j] > values[j + 1]) {
         [values[j], values[j+1]] = [values[j+1], values[j]];
         await swapBars(j, j + 1);
         swapped = true;
       }
-      getBar(j+1).classList.remove('sorting');
     }
     if (!swapped) break;
   }
@@ -85,35 +86,33 @@ async function insertionSort() {
     let j = i - 1;
     while (j >= 0 && values[j] > key) {
       if (!running) return 0;
-
-      values[j + 1] = values[j];
-      getBar(j).classList.add('sorting');
       [values[j+1], values[j]] = [values[j], values[j+1]];
-      await swapBars(j+1, j);
-      getBar(j).classList.remove('sorting');
+      getBar(j).classList.add('swapping');
+      await swapBars(j, j+1);
+      getBar(j).classList.remove('swapping');
       j = j - 1;
     }
     values[j + 1] = key;
   }
 }
 
+/* ── SELECTION SORT ──────────────────────────── */
 async function selectionSort() {
   for (let i = 0; i < values.length - 1; i++) {
     let min_idx = i;
       
     for (let j = i + 1; j < values.length; j++) {
       if (!running) return 0;  
+      getBar(j).classList.add('comparing');
+      await sleep(0);
       if (values[j] < values[min_idx]) {
         // Update min_idx if a smaller element is found
         min_idx = j;
       }
+      getBar(j).classList.remove('comparing');
     }
     [values[i], values[min_idx]] = [values[min_idx], values[i]];
-    getBar(i).classList.add('sorting');
-    getBar(min_idx).classList.add('sorting');
     await swapBars(i, min_idx);
-    getBar(i).classList.remove('sorting');
-    getBar(min_idx).classList.remove('sorting');
   }
 }
 
@@ -177,12 +176,12 @@ async function refreshBar(i) {
   const bar = getBar(i);
   if (!bar) return;
 
-  bar.classList.add('sorting');
+  bar.classList.add('swapping');
   bar.style.height = `${Math.max(values[i], 3)}%`;
   const label = bar.querySelector('.bar-label');
-  await sleep(delay/3);
+  await sleep(delay);
   if (label) label.textContent = values[i];
-  bar.classList.remove('sorting');
+  bar.classList.remove('swapping');
 }
 
 /* ── QUICK SORT ──────────────────────────── */
@@ -195,19 +194,11 @@ async function partition(low, high)
       if (values[j] < pivot) {
           i++;
           [values[i], values[j]] = [values[j], values[i]];
-          getBar(i).classList.add('sorting');
-          getBar(j).classList.add('sorting');
           await swapBars(i, j);
-          getBar(i).classList.remove('sorting');
-          getBar(j).classList.remove('sorting');
       }
     }
     [values[i+1], values[high]] = [values[high], values[i+1]];
-    getBar(i+1).classList.add('sorting');
-    getBar(high).classList.add('sorting');
     await swapBars(i + 1, high);
-    getBar(i+1).classList.remove('sorting');
-    getBar(high).classList.remove('sorting');
     return i + 1;
 }
 
@@ -228,13 +219,160 @@ async function quickSort(low, high)
 }
 
 
+/* ── BUCKET SORT ──────────────────────────── */
+
+//Use insertion sort to sort each bucket
+async function bucketInsertionSort(bucket) {
+  const size = bucket.length
+  for (let i = 1; i < size; i++) {
+    let j = i;
+    while (j > 0 && bucket[j - 1].value > bucket[j].value) {
+      const bar1 = bucket[j].bar;
+      const bar2 = bucket[j - 1].bar;
+      [bucket[j], bucket[j - 1]] = [bucket[j - 1], bucket[j]];
+      await swapBarElements(bar1, bar2);
+      j = j - 1;
+    }
+  }
+}
+
+//Sorting logic
+async function bucketSort() {
+  const bucketCount = 5;
+  await setUpBuckets(bucketCount);
+  let buckets = Array.from({length: bucketCount}, () => []);
+
+  // Snapshot everything BEFORE any DOM moves
+  const snapshot = values.map((v, i) => ({value: v, bar: getBar(i)}));
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
+  const range = maxValue - minValue || 1;
+
+  console.log(snapshot.length);
+  //Fill buckets from snapshot
+  for (let i = 0; i < snapshot.length; i++) {
+    let bucket_index = Math.floor(((snapshot[i].value - minValue) / range) * bucketCount);
+    bucket_index = Math.min(bucket_index, bucketCount - 1);
+    buckets[bucket_index].push(snapshot[i]);
+    document.getElementById(`bucket-${bucket_index}`).appendChild(snapshot[i].bar);
+    // Animate the bar directly instead of refreshBar(i)
+    snapshot[i].bar.classList.add('swapping');
+    await sleep(delay);
+    snapshot[i].bar.classList.remove('swapping');
+  }
+
+  // Sort each bucket
+  for (let i = 0; i < buckets.length; i++) {
+    //buckets[i].sort((a, b) => a.value - b.value);
+    await Promise.all(buckets.map(bucket => bucketInsertionSort(bucket)));
+  }
+
+  // Write back with animation
+  let index = 0;
+  for (let i = 0; i < buckets.length; i++) {
+    for (let j = 0; j < buckets[i].length; j++) {
+      await refreshBar(index);
+      values[index] = buckets[i][j].value;
+      const bar = buckets[i][j].bar;
+      bar.id = `bar-${index}`;
+      barContainer.appendChild(bar);
+      await refreshBar(index);
+      index++;
+    }
+  }
+}
+
+//Create bucket elements
+async function setUpBuckets(bucketCount) {
+  const bucketContainer = document.getElementById('bucketContainer'); 
+  bucketContainer.innerHTML = "";
+  const containerWidth = bucketContainer.clientWidth;
+  const bucketWidth = Math.floor(containerWidth / bucketCount);
+  bucketContainer.style.border = '1px solid #ccc';
+  bucketContainer.style.height = '85px';
+
+  //Assign each bucket with CSS
+  for (let i = 0; i < bucketCount; i++) {
+    const newBucket = document.createElement('div');
+    newBucket.classList.add('bucket');
+    newBucket.id = `bucket-${i}`;
+    newBucket.style.width = `${bucketWidth}px`;
+    bucketContainer.appendChild(newBucket);
+  }
+}
+
+/* ── RADIX SORT ──────────────────────────── */
+
+async function getMax() {
+  let max = values[0];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] > max) {
+      max = values[i];
+      await refreshBar(i);
+    }
+  }
+  return max;
+}
+
+// A function to do counting sort of arr[] according to
+// the digit represented by exp.
+async function countSort(exp) {
+  const length = values.length;
+  let output = Array(length); // output array
+  let count = Array(2).fill(0, 0);
+
+  // Store count of occurrences in count[]
+  for (let i = 0; i < length; i++) {
+    const digit = Math.floor(values[i] / exp) % 2;
+    count[digit]++;
+  }
+
+  // Change count[i] so that count[i] now contains
+  // actual position of this digit in output[]
+  for (let i = 1; i < 2; i++) {
+    count[i] += count[i - 1];
+  }
+
+  // Build the output array
+  for (let i = length - 1; i >= 0; i--) {
+    const digit = Math.floor(values[i] / exp) % 2;
+    output[count[digit] - 1] = values[i];
+    count[digit]--;
+    await refreshBar(i);
+  }
+
+  return output;
+}
+
+// The main function to that sorts arr[] using Radix Sort
+async function radixSort() {
+  const maxNumber = await getMax();
+
+  for (let exp = 1; Math.floor(maxNumber / exp) > 0; exp *= 2) {
+    // Get the Count sort iteration
+    const sortedIteration = await countSort(exp);
+    values = sortedIteration;
+    for (let i = 0; i < values.length; i++) {
+      await refreshBar(i);
+    }
+  }
+  console.log(values);
+}
+
 /* ── RUN SORTS ──────────────────────────── */
 async function runSort() {
   running = true;
 
-  const algo = document.getElementById('algorithms').value;
+  algo = document.getElementById('algorithms').value;
   timer.textContent = "Sorting...";
   const t0 = performance.now();
+
+  if (algo == 'bucket') {
+    barContainer.style.height = '320px';
+  } else {
+    barContainer.style.height = '420px';
+    bucketContainer.innerHTML = "";
+  }
   switch (algo) {
     case 'bubble':
       await bubbleSort(); break;
@@ -246,6 +384,10 @@ async function runSort() {
       await mergeSort(0, values.length - 1); break;
     case 'quick':
       await quickSort(0, values.length - 1); break;
+    case 'bucket':
+      await bucketSort(); break;
+    case 'radix':
+      await radixSort(); break;
     default:
       alert("Please select a sorting algorithm!")
   }
@@ -260,8 +402,10 @@ async function runSort() {
 async function markAllSorted(n) {
   for (let i = 0; i < n; i++) {
     const bar = getBar(i);
-    bar.style.backgroundColor = 'green';
-    await sleep(Math.ceil(delay/3));
+    if (bar) {
+      bar.style.backgroundColor = 'green';
+      await sleep(Math.ceil(delay/3));
+    }
   }
 }
 
@@ -281,13 +425,35 @@ function visualSwapBar(bar1, bar2) {
 
 async function swapBars(i, j) {
   const bar1 = getBar(i), bar2 = getBar(j);
-
+  if (algo != 'insert') {
+    bar1.classList.add('swapping');
+    bar2.classList.add('swapping');
+  }
+  
   // swap heights + labels
   if (bar1 && bar2) {
     visualSwapBar(bar1, bar2);
   }
 
   await sleep(delay);
+  bar1.classList.remove('swapping');
+  bar2.classList.remove('swapping');
+}
+
+async function swapBarElements(bar1, bar2) {
+  bar1.classList.add('swapping');
+  bar2.classList.add('swapping');
+
+  const parent1 = bar1.parentNode;
+  const parent2 = bar2.parentNode;
+  const temp = bar2.nextSibling; // save what's AFTER bar2
+
+  parent1.insertBefore(bar2, bar1); // put bar2 where bar1 was
+  parent2.insertBefore(bar1, temp); // put bar1 where bar2 was
+
+  await sleep(delay);
+  bar1.classList.remove('swapping');
+  bar2.classList.remove('swapping');
 }
 
 function sleep(ms) {

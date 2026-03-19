@@ -19,6 +19,18 @@ body {
   height: 420px;
   border-radius: 3px;
   margin-top: 10px;
+  transition: height 0.5s ease, transform 0.5s ease;
+}
+
+.bar {
+  margin-top: auto;
+  background-color: rgb(35,35,80);
+  border: 1px solid lavender;
+  color: rgb(200, 200, 230);
+  width: 56px;
+  text-align: center;
+  align-items: center;
+  font-size: 12px;
 }
 
 hr {
@@ -32,17 +44,6 @@ label {
 h1 {
   color: white;
   font-size: 250%;
-}
-
-.bar {
-  margin-top: auto;
-  background-color: rgb(35,35,80);
-  border: 1px solid lavender;
-  color: rgb(200, 200, 230);
-  width: 56px;
-  text-align: center;
-  align-items: center;
-  font-size: 12px;
 }
 
 #config {
@@ -82,8 +83,38 @@ input[type="range"] {
   width: 180px;
 }
 
-.sorting {
+.swapping {
   background-color: red;
   color: silver;
 }
 
+.comparing {
+  background-color: rgb(188, 135, 32);
+  color: silver;
+}
+
+#bucketContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+
+  margin-top: 15px;
+  overflow: hidden;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.bucket {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  
+
+  background: lavender;
+  border: 1px solid #aaa;
+  height: 85px;
+}
