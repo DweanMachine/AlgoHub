@@ -4,10 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AlgoHub</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sort-style.css">
 </head>
 <body>
-  <h1>ALGO<span style="color:aquamarine">HUB</span></h1>
+  <header>
+    <h1 style="color:white">ALGO<span style="color:aquamarine">HUB</span></h1>
+    <a href=""><h3 class="header-text">Sorting</h3></a>
+    <a href="crypto-index.html"><h3 class="header-text">Cryptography</h3></a>
+  </header>
   <hr>
   <div id="config">
     <select id="algorithms">
@@ -24,11 +28,19 @@
     <button id="chosen-sort">Sort</button>
     <div class="slider">
       <label id="bar-count-label" for="bar-slider">Bars: 12</label>
-      <input id="bar-slider" type="range" min="3" max="250" step="1">
+      <input id="bar-slider" type="range" value="12" min="3" max="250" step="1">
     </div>
     <div class="slider">
       <label id="speed-label" for="speed-slider">Delay: 15 ms</label>
-      <input id="speed-slider" type="range" min="1" max="120" step="1">
+      <input id="speed-slider" type="range" value="15" min="1" max="120" step="1">
+    </div>
+    <div id="bucket-slider-container" class="slider hidden">
+      <label id="bucket-label" for="bucket-slider">Buckets: 5</label>
+      <input id="bucket-slider" type="range" value="5" min="2" max="12" step="1">
+    </div>
+    <div id="radix-slider-container" class="slider hidden">
+      <label id="radix-exp-label" for="radix-exp-slider">Exponent: 2</label>
+      <input id="radix-exp-slider" type="range" value="2" min="2" max="10" step="1">
     </div>
     <button id="btn-generate">Create New Values</button>
 
@@ -40,6 +52,6 @@
   <div id="container"></div>
   <div id="bucketContainer"></div>
   
-  <script src="code.js"></script>
+  <script src="sort-code.js"></script>
 </body>
 </html>

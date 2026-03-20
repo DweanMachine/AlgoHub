@@ -4,6 +4,11 @@ let delay = 15;
 let running = false;
 let algo = null;
 
+
+//Function specific variables
+let radixExp = 2;
+let bucketCount = 5;
+
 //List of elements
 const timer = document.getElementById("timer");
 const barContainer = document.getElementById("container");
@@ -238,7 +243,6 @@ async function bucketInsertionSort(bucket) {
 
 //Sorting logic
 async function bucketSort() {
-  const bucketCount = 5;
   await setUpBuckets(bucketCount);
   let buckets = Array.from({length: bucketCount}, () => []);
 
@@ -306,49 +310,48 @@ async function setUpBuckets(bucketCount) {
 async function getMax() {
   let max = values[0];
   for (let i = 1; i < values.length; i++) {
+    await refreshBar(i);
     if (values[i] > max) {
       max = values[i];
-      await refreshBar(i);
     }
   }
   return max;
 }
 
-// A function to do counting sort of arr[] according to
-// the digit represented by exp.
-async function countSort(exp) {
-  const length = values.length;
-  let output = Array(length); // output array
-  let count = Array(2).fill(0, 0);
+const exp_slider = document.getElementById('radix-exp-slider');
 
-  // Store count of occurrences in count[]
+async function countSort(exp) {
+  const base = Number(exp_slider.value);
+  const length = values.length;
+  let outputArr = Array(length); // output array
+  let count = Array(base).fill(0);
+
+  //Store count of occurrences in count[]
   for (let i = 0; i < length; i++) {
-    const digit = Math.floor(values[i] / exp) % 2;
+    const digit = Math.floor(values[i] / exp) % base;
     count[digit]++;
   }
 
-  // Change count[i] so that count[i] now contains
-  // actual position of this digit in output[]
-  for (let i = 1; i < 2; i++) {
+  for (let i = 1; i < base; i++) {
     count[i] += count[i - 1];
   }
 
-  // Build the output array
+  //Build the output array
   for (let i = length - 1; i >= 0; i--) {
-    const digit = Math.floor(values[i] / exp) % 2;
-    output[count[digit] - 1] = values[i];
+    const digit = Math.floor(values[i] / exp) % base;
+    outputArr[count[digit] - 1] = values[i];
+    //await swapBars(count[digit] - 1, values[i]);
     count[digit]--;
-    await refreshBar(i);
   }
 
-  return output;
+  return outputArr;
 }
 
 // The main function to that sorts arr[] using Radix Sort
 async function radixSort() {
   const maxNumber = await getMax();
 
-  for (let exp = 1; Math.floor(maxNumber / exp) > 0; exp *= 2) {
+  for (let exp = 1; Math.floor(maxNumber / exp) > 0; exp *= exp_slider.value) {
     // Get the Count sort iteration
     const sortedIteration = await countSort(exp);
     values = sortedIteration;
@@ -364,15 +367,25 @@ async function runSort() {
   running = true;
 
   algo = document.getElementById('algorithms').value;
-  timer.textContent = "Sorting...";
-  const t0 = performance.now();
+  
 
   if (algo == 'bucket') {
     barContainer.style.height = '320px';
+    document.getElementById('bucket-slider-container').classList.remove('hidden');
   } else {
     barContainer.style.height = '420px';
     bucketContainer.innerHTML = "";
+    document.getElementById('bucket-slider-container').classList.add('hidden');
   }
+
+  if (algo == 'radix') {
+    document.getElementById('radix-slider-container').classList.remove('hidden');
+  } else {
+    document.getElementById('radix-slider-container').classList.add('hidden');
+  }
+  
+  const t0 = performance.now();
+  timer.textContent = "Sorting...";
   switch (algo) {
     case 'bubble':
       await bubbleSort(); break;
@@ -389,7 +402,9 @@ async function runSort() {
     case 'radix':
       await radixSort(); break;
     default:
-      alert("Please select a sorting algorithm!")
+      alert("Please select a sorting algorithm!");
+      timer.textContent = "Ready!";
+      return;
   }
   const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
   timer.textContent = "Time Taken: " + elapsed + "s";
@@ -463,6 +478,7 @@ function sleep(ms) {
 document.addEventListener('DOMContentLoaded', () => {
   const bar_slider = document.getElementById('bar-slider');
   const speed_slider = document.getElementById('speed-slider');
+  const bucket_slider = document.getElementById('bucket-slider');
   adjustDelay();
 
   bar_slider.addEventListener('change', () => {
@@ -471,6 +487,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   speed_slider.addEventListener('input', () => {
     adjustDelay();
+  });
+
+  bucket_slider.addEventListener('input', () => {
+    bucketCount = bucket_slider.value;
+    document.getElementById('bucket-label').textContent = `Buckets: ${bucketCount}`;
+    setUpBuckets(bucketCount);
+  });
+
+  exp_slider.addEventListener('input', () => {
+    document.getElementById('radix-exp-label').textContent = `Exponent: ${exp_slider.value}`;
   });
 
   document.getElementById('btn-generate').addEventListener('click', () => {

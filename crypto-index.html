@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlgoHub</title>
+  <link rel="stylesheet" href="crypto-style.css">
+</head>
+<body>
+  <header>
+    <h1 style="color:white">ALGO<span style="color:aquamarine">HUB</span></h1>
+    <a href="sort-index.html"><h3 class="header-text">Sorting</h3></a>
+    <a href=""><h3 class="header-text">Cryptography</h3></a>
+  </header>
+  <hr>
+  <label for="plaintext" id="plain-label">PlainText:</label>
+  <textarea id="plaintext"></textarea>
+  <div id="config">
+    <select id="algorithms">
+      <option selected disabled>Select Algorithm:</option>
+      <option id="caesar-cipher" value="caesar">Caesar Cipher</option>
+    </select>
+    
+    <button id="encrypt-button">Encrypt</button>
+    <input id="encryptSwap" type="checkbox">
+
+    <label>Shift:</label>
+    <input id="caesarShift" type="number" min="0" max="25"></input>
+  </div>
+  <hr></hr>
+  <label for="ciphertext" id="cipher-label">CipherText:</label>
+  <h3 id="ciphertext"></h3>
+  <script src="crypto-code.js"></script>
+</body>
+</html>
