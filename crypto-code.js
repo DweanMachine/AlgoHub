@@ -16,6 +16,24 @@ function caesarCipher(text, shift) {
   return result;
 }
 
+function caesarCipher(text, shift) {
+  let result=""
+  for (let i = 0; i < text.length; i++) {
+    let char = text[i];
+    if (char == " ") { result += " "; continue;}
+    if (char == '\n') { result += '\n'; continue;}
+    
+    let decrypt = 1;
+    if (encryptSwap.checked) {
+      decrypt = -1;
+    } 
+
+    let ch = ((convertCharToInt(char) + shift * decrypt) % 26 + 26) % 26 + 65;
+    result += String.fromCharCode(ch);
+  }
+  return result;
+}
+
 function convertCharToInt(char) {
   const isUpper = char === char.toUpperCase();   // toUpperCase() takes no args
   const base = isUpper ? 65 : 97;   // 65 = 'A', 97 = 'a'
@@ -43,9 +61,12 @@ encrypt_button.addEventListener('click', () => {
 
 encryptSwap.addEventListener('click', () => {
   if (encryptSwap.checked) {
-    encrypt_button.textContent = 'Encrypt';
-  } else {
     encrypt_button.textContent = 'Decrypt';
+    cipherLabel.textContent = "Plaintext:";
+    plainLabel.textContent = "Ciphertext:";
+  } else {
+    encrypt_button.textContent = 'Encrypt';
+    cipherLabel.textContent = "Ciphertext:";
+    plainLabel.textContent = "Plaintext:";
   }
-  [cipherLabel.textContent, plainLabel.textContent] = [plainLabel.textContent, cipherLabel.textContent];
 })

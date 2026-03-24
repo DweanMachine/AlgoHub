@@ -22,10 +22,14 @@
     </select>
     
     <button id="encrypt-button">Encrypt</button>
+    <label for="encryptSwap">Decryption Mode:</label>
     <input id="encryptSwap" type="checkbox">
 
     <label>Shift:</label>
     <input id="caesarShift" type="number" min="0" max="25"></input>
+    
+    <label>Mult:</label>
+    <input id="affineShift" type="number" min="0" max="25"></input>
   </div>
   <hr></hr>
   <label for="ciphertext" id="cipher-label">CipherText:</label>

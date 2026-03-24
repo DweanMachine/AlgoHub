@@ -49,7 +49,6 @@ function generateValues(barCount) {
       newDiv.appendChild(label);
     } else {
       newDiv.style.borderColor = `rgb(120, 120, 150)`;
-      console.log(newDiv.style.borderColor);
     }
 
     barContainer.appendChild(newDiv);
@@ -108,13 +107,13 @@ async function selectionSort() {
       
     for (let j = i + 1; j < values.length; j++) {
       if (!running) return 0;  
-      getBar(j).classList.add('comparing');
-      await sleep(0);
+      getBar(j).classList.add('swapping');
+      await sleep(delay);
       if (values[j] < values[min_idx]) {
         // Update min_idx if a smaller element is found
         min_idx = j;
       }
-      getBar(j).classList.remove('comparing');
+      getBar(j).classList.remove('swapping');
     }
     [values[i], values[min_idx]] = [values[min_idx], values[i]];
     await swapBars(i, min_idx);
@@ -219,7 +218,6 @@ async function quickSort(low, high)
         // and greater or equals elements
         await quickSort(low, pi - 1);
         await quickSort(pi + 1, high);
-        console.log(values);
     }
 }
 
@@ -231,7 +229,7 @@ async function bucketInsertionSort(bucket) {
   const size = bucket.length
   for (let i = 1; i < size; i++) {
     let j = i;
-    while (j > 0 && bucket[j - 1].value > bucket[j].value) {
+    while (j > 0 && bucket[j - 1].value > bucket[j].value && running) {
       const bar1 = bucket[j].bar;
       const bar2 = bucket[j - 1].bar;
       [bucket[j], bucket[j - 1]] = [bucket[j - 1], bucket[j]];
@@ -252,14 +250,14 @@ async function bucketSort() {
   const minValue = Math.min(...values);
   const range = maxValue - minValue || 1;
 
-  console.log(snapshot.length);
   //Fill buckets from snapshot
   for (let i = 0; i < snapshot.length; i++) {
     let bucket_index = Math.floor(((snapshot[i].value - minValue) / range) * bucketCount);
     bucket_index = Math.min(bucket_index, bucketCount - 1);
     buckets[bucket_index].push(snapshot[i]);
     document.getElementById(`bucket-${bucket_index}`).appendChild(snapshot[i].bar);
-    // Animate the bar directly instead of refreshBar(i)
+    
+    if (!running) { return; }
     snapshot[i].bar.classList.add('swapping');
     await sleep(delay);
     snapshot[i].bar.classList.remove('swapping');
@@ -275,6 +273,7 @@ async function bucketSort() {
   let index = 0;
   for (let i = 0; i < buckets.length; i++) {
     for (let j = 0; j < buckets[i].length; j++) {
+      if (!running) { return; }
       await refreshBar(index);
       values[index] = buckets[i][j].value;
       const bar = buckets[i][j].bar;
@@ -310,6 +309,7 @@ async function setUpBuckets(bucketCount) {
 async function getMax() {
   let max = values[0];
   for (let i = 1; i < values.length; i++) {
+    if (!running) { return; }
     await refreshBar(i);
     if (values[i] > max) {
       max = values[i];
@@ -357,9 +357,81 @@ async function radixSort() {
     values = sortedIteration;
     for (let i = 0; i < values.length; i++) {
       await refreshBar(i);
+      if (!running) {
+        return;
+      }
     }
   }
+}
+
+/* ── HEAP SORT ──────────────────────────── */
+async function heapify(n, i) {
+    let largest = i;
+
+    let l = 2 * i + 1; //left index
+    let r = 2 * i + 2; //right index
+
+    // If left child is larger than root
+    if (l < n && values[l] > values[largest])
+        largest = l;
+
+    // If right child is larger than largest so far
+    if (r < n && values[r] > values[largest])
+        largest = r;
+
+    // If largest is not root
+    if (largest != i) {
+        [values[i], values[largest]] = [values[largest], values[i]];
+        await swapBars(i, largest);
+
+        // Recursively heapify the affected sub-tree
+        await heapify(n, largest);
+    }
+}
+
+// Main function to do heap sort
+async function heapSort() {
+    let n = values.length;
+
+    // Build heap (rearrange vector)
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--)
+        await heapify(n, i);
+    // One by one extract an element from heap
+    for (let i = n - 1; i > 0; i--) {
+        [values[0], values[i]] = [values[i], values[0]]; // Move current root to end
+        await swapBars(0, i);
+        await heapify(i, 0); // Call max heapify on the reduced heap
+    }
+}
+/* ── PERMUTATION SORT ───────────────────── */
+
+async function isSorted(){
+  for(var i = 1; i < values.length; i++) {
+    if (values[i] < values[i-1])
+      return false;
+  }
+  return true;
+}
+    
+// To generate permutation of the array
+async function shuffle() {
+  var i, j = values.length;
+  for (i = 0; i < values.length; i++){
+    var rand_index = Math.floor(Math.random() * values.length);
+    
+    [values[j-i-1], values[rand_index]] = [values[rand_index], values[j-i-1]];
+    if (!running) {return;}
+    await swapBars(j-i-1, rand_index);
+  }
   console.log(values);
+}
+    
+// Sorts array a[0..n-1] using Bogo sort
+async function bogoSort() {
+  // if array is not sorted then shuffle the array again
+  while (!await isSorted() && running)
+    await shuffle();
+  return values;
 }
 
 /* ── RUN SORTS ──────────────────────────── */
@@ -369,20 +441,14 @@ async function runSort() {
   algo = document.getElementById('algorithms').value;
   
 
-  if (algo == 'bucket') {
-    barContainer.style.height = '320px';
-    document.getElementById('bucket-slider-container').classList.remove('hidden');
-  } else {
+  if (algo != 'radix') {
+    document.getElementById('radix-slider-container').classList.add('hidden');
+  } 
+  if (algo != 'bucket') {
     barContainer.style.height = '420px';
     bucketContainer.innerHTML = "";
     document.getElementById('bucket-slider-container').classList.add('hidden');
-  }
-
-  if (algo == 'radix') {
-    document.getElementById('radix-slider-container').classList.remove('hidden');
-  } else {
-    document.getElementById('radix-slider-container').classList.add('hidden');
-  }
+  } 
   
   const t0 = performance.now();
   timer.textContent = "Sorting...";
@@ -401,6 +467,10 @@ async function runSort() {
       await bucketSort(); break;
     case 'radix':
       await radixSort(); break;
+    case 'heap':
+      await heapSort(); break;
+    case 'bogo':
+      await bogoSort(); break;
     default:
       alert("Please select a sorting algorithm!");
       timer.textContent = "Ready!";
@@ -455,6 +525,8 @@ async function swapBars(i, j) {
   bar2.classList.remove('swapping');
 }
 
+
+
 async function swapBarElements(bar1, bar2) {
   bar1.classList.add('swapping');
   bar2.classList.add('swapping');
@@ -507,6 +579,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('chosen-sort').addEventListener('click', () => {
     runSort();
+  });
+
+  document.getElementById('radix-sort').addEventListener('click', () => {
+    document.getElementById('radix-slider-container').classList.remove('hidden');
+  });
+
+  document.getElementById('bucket-sort').addEventListener('click', () => {
+    barContainer.style.height = '320px';
+    document.getElementById('bucket-slider-container').classList.remove('hidden');
+    setUpBuckets(5);
   });
 
   generateValues(bar_slider.value);
