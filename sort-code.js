@@ -4,8 +4,7 @@ let delay = 15;
 let running = false;
 let algo = null;
 
-
-//Function specific variables
+//Algorithm specific variables
 let radixExp = 2;
 let bucketCount = 5;
 
@@ -13,6 +12,7 @@ let bucketCount = 5;
 const timer = document.getElementById("timer");
 const barContainer = document.getElementById("container");
 
+//Delay helper function
 function adjustDelay() {
   delay = parseInt(document.getElementById('speed-slider').value);
   document.getElementById('speed-label').textContent = `Delay: ${delay} ms`
@@ -320,7 +320,7 @@ async function getMax() {
 
 const exp_slider = document.getElementById('radix-exp-slider');
 
-async function countSort(exp) {
+async function heapCountSort(exp) {
   const base = Number(exp_slider.value);
   const length = values.length;
   let outputArr = Array(length); // output array
@@ -353,7 +353,7 @@ async function radixSort() {
 
   for (let exp = 1; Math.floor(maxNumber / exp) > 0; exp *= exp_slider.value) {
     // Get the Count sort iteration
-    const sortedIteration = await countSort(exp);
+    const sortedIteration = await heapCountSort(exp);
     values = sortedIteration;
     for (let i = 0; i < values.length; i++) {
       await refreshBar(i);
@@ -403,7 +403,7 @@ async function heapSort() {
         await heapify(i, 0); // Call max heapify on the reduced heap
     }
 }
-/* ── PERMUTATION SORT ───────────────────── */
+/* ── BOGO/PERMUTATION SORT ──────────────── */
 
 async function isSorted(){
   for(var i = 1; i < values.length; i++) {
@@ -432,6 +432,38 @@ async function bogoSort() {
   while (!await isSorted() && running)
     await shuffle();
   return values;
+}
+
+/* ── COUNT SORT ───────────────── */
+
+async function countSort() {
+  if (values.length === 0) return [];
+
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const countArray = new Array(maxVal - minVal + 1).fill(0);
+
+  for (let v of values) {
+    countArray[v - minVal]++;
+  }
+
+  for (let i = 1; i < countArray.length; i++) {
+    countArray[i] += countArray[i - 1];
+  }
+
+  const output = new Array(values.length);
+  for (let i = values.length - 1; i >= 0; i--) {
+    const v = values[i];
+    output[countArray[v - minVal] - 1] = v;
+    countArray[v - minVal]--;
+    await refreshBar(i); 
+    await refreshBar(countArray[v - minVal] + 1);
+  }
+
+  for (let i = 0; i < values.length; i++) {
+    values[i] = output[i];
+    await refreshBar(i);
+  }
 }
 
 /* ── RUN SORTS ──────────────────────────── */
@@ -465,6 +497,8 @@ async function runSort() {
       await quickSort(0, values.length - 1); break;
     case 'bucket':
       await bucketSort(); break;
+    case 'count':
+      await countSort(); break;
     case 'radix':
       await radixSort(); break;
     case 'heap':
