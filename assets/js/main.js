@@ -3,17 +3,7 @@ import {state} from './state.js';
 import {markAllSorted} from './animations.js';
 
 //Importing sorting algorithms
-import {bogoSort} from './algorithms/bogoSort.js';
-import {bubbleSort} from './algorithms/bubbleSort.js';
-import {insertionSort} from './algorithms/insertionSort.js';
-import {heapSort} from './algorithms/heapSort.js';
-import {mergeSort} from './algorithms/mergeSort.js';
-import {quickSort} from './algorithms/quickSort.js';
-import {selectionSort} from './algorithms/selectionSort.js';
-import {bucketSort} from './algorithms/bucketSort.js';
-import {radixSort} from './algorithms/radixSort.js';
-import {countSort} from './algorithms/countSort.js';
-
+import {bogoSort, bubbleSort, insertionSort, heapSort, mergeSort, quickSort, selectionSort, bucketSort, radixSort, countSort} from './algorithms/index.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initControls(runSort);
