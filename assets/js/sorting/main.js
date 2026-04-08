@@ -1,11 +1,13 @@
 import {elements, initControls} from './dom.js';
 import {state} from './state.js';
 import {markAllSorted} from './animations.js';
+import {initSettings} from '../settings.js';
 
 //Importing sorting algorithms
 import {bogoSort, bubbleSort, insertionSort, heapSort, mergeSort, quickSort, selectionSort, bucketSort, radixSort, countSort} from './algorithms/index.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+  initSettings(); //Ignored settings for now, will add back later
   initControls(runSort);
 });
 
@@ -27,7 +29,6 @@ async function runSort() {
   
   const t0 = performance.now();
   state.running = true;
-  console.log(state.running);
   const algo = document.getElementById('algorithms').value;
   const sortFn = algorithms[algo];
   if (!sortFn) { alert("Select an algorithm!"); return; }

@@ -1,6 +1,7 @@
 import {state} from '../state.js';
 import {swapBarElements, refreshBar, getBar, sleep} from '../animations.js';
 import {setUpBuckets, elements} from '../dom.js';
+import { playTone } from '../audio.js';
 
 async function bucketInsertionSort(bucket) {
   const size = bucket.length
@@ -32,6 +33,7 @@ export async function bucketSort() {
     let bucket_index = Math.floor(((snapshot[i].value - minValue) / range) * state.bucketCount);
     bucket_index = Math.min(bucket_index, state.bucketCount - 1);
     buckets[bucket_index].push(snapshot[i]);
+    playTone(snapshot[i].value);
     document.getElementById(`bucket-${bucket_index}`).appendChild(snapshot[i].bar);
     
     if (!state.running) { return; }

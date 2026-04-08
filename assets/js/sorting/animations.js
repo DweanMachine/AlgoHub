@@ -1,4 +1,5 @@
 import {state} from './state.js';
+import {playTone} from './audio.js';
 
 //Sleeps for a specified number of milliseconds
 export function sleep(ms) {
@@ -35,7 +36,7 @@ export async function swapBars(i, j) {
     bar1.classList.add('swapping');
     bar2.classList.add('swapping');
   }
-
+  playTone(state.values[j]);   
   visualSwapBar(bar1, bar2);
   await sleep(state.delay);
 
@@ -52,6 +53,7 @@ export async function swapBarElements(bar1, bar2) {
   const parent2 = bar2.parentNode;
   const temp = bar2.nextSibling;
 
+  playTone(parseInt(bar2.style.height, 10));
   parent1.insertBefore(bar2, bar1);
   parent2.insertBefore(bar1, temp);
 
@@ -66,6 +68,7 @@ export async function refreshBar(i) {
   const bar = getBar(i);
   if (!bar) return;
 
+  playTone(state.values[i]); 
   bar.classList.add('swapping');
   bar.style.height = `${Math.max(state.values[i], 3)}%`;
 
@@ -84,5 +87,6 @@ export async function markAllSorted(n) {
       bar.style.backgroundColor = 'green';
       await sleep(Math.ceil(state.delay / 3));
     }
+    playTone(state.values[i]); 
   }
 }

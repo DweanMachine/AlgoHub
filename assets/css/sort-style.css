@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');
 
 *{
   font-family: "Fjalla One", sans-serif;
@@ -6,9 +7,16 @@
   font-style: normal;
 }
 
-
 body {
   background-color: rgb(30, 58, 95);
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
 }
 
 header {
@@ -19,11 +27,13 @@ header {
 
 .header-text {
   color: rgb(150, 150, 180);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .header-text:hover {
   color: white;
   cursor:pointer;
+  transform: scale(1.05);
 }
 
 #container{
@@ -38,6 +48,7 @@ header {
 }
 
 .bar {
+  font-family: 'Barlow', sans-serif;
   margin-top: auto;
   background-color: rgb(35,35,80);
   border: 1px solid lavender;
@@ -76,6 +87,71 @@ h1 {
   height: 10px;
   font-size: 140%;
   color: aquamarine;
+}
+
+.settings-wrapper {
+  position: relative;
+}
+
+.fa-gear {
+  color: rgb(150, 150, 180);
+  position: relative;
+  transition: color 0.2s ease, transform 0.2s ease;
+  right: 0;
+}
+
+.fa-gear:hover {
+  color: white;
+  cursor: pointer;
+  transform: rotate(90deg);
+}
+
+.settings-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 180px;
+  color: rgb(35,35,80);
+  background: rgb(200, 200, 230);
+  border: 2px solid rgb(120, 120, 150);
+  border-radius: 3px;
+  padding: 0;
+  z-index: 200;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  padding: 2px;
+  
+
+  /* Closed state */
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.settings-menu button {
+  background-color: rgb(35,35,80);
+  border: 2px solid rgb(35,35,80);
+  border-radius: 3px;
+  text-align: left;
+  font-size: 14px;
+  color: rgb(200, 200, 230);
+}
+
+.settings-menu.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+#volume-slider {
+  width: 75%;
+  position: absolute;
+  bottom: -2px;
+}
+
+#volume-icon { 
+  cursor: pointer;
 }
 
 .slider {

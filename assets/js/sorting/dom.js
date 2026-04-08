@@ -2,13 +2,13 @@ import {state} from './state.js';
 
 //reference to important DOM elements
 export const elements = {
-  timer:          document.getElementById('timer'),
-  barContainer:   document.getElementById('container'),
+  timer:           document.getElementById('timer'),
+  barContainer:    document.getElementById('container'),
   bucketContainer: document.getElementById('bucketContainer'),
-  barSlider:      document.getElementById('bar-slider'),
-  speedSlider:    document.getElementById('speed-slider'),
-  bucketSlider:   document.getElementById('bucket-slider'),
-  expSlider:      document.getElementById('radix-exp-slider'),
+  barSlider:       document.getElementById('bar-slider'),
+  speedSlider:     document.getElementById('speed-slider'),
+  bucketSlider:    document.getElementById('bucket-slider'),
+  expSlider:       document.getElementById('radix-exp-slider'),
 };
 
 //Generates a random integer between min and max (inclusive)
@@ -77,18 +77,23 @@ export function adjustDelay() {
 
 //Shows or hides sliders based on the selected algorithm
 export function updateSliderVisibility(algo) {
-  const radixContainer  = document.getElementById('radix-slider-container');
-  const bucketContainer = document.getElementById('bucket-slider-container');
+  const radixSliderContainer  = document.getElementById('radix-slider-container');
+  const bucketSliderContainer = document.getElementById('bucket-slider-container');
 
-  radixContainer.classList.toggle('hidden', algo !== 'radix');
-  bucketContainer.classList.toggle('hidden', algo !== 'bucket');
+  radixSliderContainer.classList.toggle('hidden', algo !== 'radix');
+  bucketSliderContainer.classList.toggle('hidden', algo !== 'bucket');
 
   if (algo === 'bucket') {
+    elements.bucketContainer.classList.remove('hidden');
+    elements.bucketContainer.innerHTML = '';
     elements.barContainer.style.height = '320px';
     setUpBuckets(state.bucketCount);
   } else {
+    elements.bucketContainer.innerHTML = '';
+    elements.bucketContainer.classList.add('hidden');
     elements.barContainer.style.height = '420px';
     elements.bucketContainer.innerHTML = '';
+    console.log('Hiding bucket container');
   }
 }
 
@@ -122,14 +127,12 @@ export function initControls(onRunSort) {
   });
 
   document.getElementById('chosen-sort').addEventListener('click', () => {
+    if (state.running) { return; }
     onRunSort();
   });
 
-  document.getElementById('radix-sort').addEventListener('click', () => {
-    updateSliderVisibility('radix');
-  });
-
-  document.getElementById('bucket-sort').addEventListener('click', () => {
-    updateSliderVisibility('bucket');
+  //Show/hide algorithm specific elements
+  document.getElementById('algorithms').addEventListener('change', (e) => {
+    updateSliderVisibility(e.target.value);
   });
 }

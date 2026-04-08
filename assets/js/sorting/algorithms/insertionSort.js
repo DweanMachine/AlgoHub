@@ -1,5 +1,5 @@
 import {state} from '../state.js';
-import {swapBars} from '../animations.js';
+import {getBar, swapBars} from '../animations.js';
 
 export async function insertionSort() {
   const size = state.values.length;

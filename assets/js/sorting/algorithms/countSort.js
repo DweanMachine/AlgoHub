@@ -18,6 +18,7 @@ export async function countSort() {
 
   const output = new Array(state.values.length);
   for (let i = state.values.length - 1; i >= 0; i--) {
+    if (!state.running) return;
     const v = state.values[i];
     output[countArray[v - minVal] - 1] = v;
     countArray[v - minVal]--;
@@ -26,6 +27,7 @@ export async function countSort() {
   }
 
   for (let i = 0; i < state.values.length; i++) {
+    if (!state.running) return;
     state.values[i] = output[i];
     await refreshBar(i);
   }

@@ -5,13 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AlgoHub</title>
   <link rel="stylesheet" href="../assets/css/sort-style.css">
+  <script src="https://kit.fontawesome.com/ee13ff4682.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <header>
     <h1 style="color:white">ALGO<span style="color:aquamarine">HUB</span></h1>
     <a href=""><h3 class="header-text">Sorting</h3></a>
     <a href="crypto-index.html"><h3 class="header-text">Cryptography</h3></a>
+    <!-- Settings Button and Menu -->
+    <div class="settings-wrapper" id="settings-wrapper">
+      <i class="fa-solid fa-gear" id="settings-btn" aria-label="Settings" aria-expanded="false"></i>
+      <div class="settings-menu" id="settings-menu" role="dialog" aria-label="Settings">
+        <div class="settings-menu-header">SETTINGS</div>
+        <hr>
+        <div class="settings-menu-item">
+          <label for="theme-select">Theme:</label>
+          <button id="theme-light" value="light">Light</button>
+          <button id="theme-dark" value="dark">Dark</button>
+        </div>
+        <hr>
+        <div class="waveform">
+          <label for="waveform-select">Waveform:</label>
+          <select id="waveform-select">
+            <option value="sine" selected>Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+        </div>
+        <hr>
+        <div class="settings-menu-item">
+          <label for="volume-slider">Volume:</label>
+          <br>
+          <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+          <input id="volume-slider" type="range" value="50" min="0" max="100" step="1">
+        </div>
+      </div>
+      
+    </div>
   </header>
+
   <hr>
   <div id="config">
     <select id="algorithms">
@@ -55,6 +88,6 @@
   <div id="container"></div>
   <div id="bucketContainer"></div>
   
-  <script type="module" src="../assets/js/main.js"></script>
+  <script type="module" src="../assets/js/sorting/main.js"></script>
 </body>
 </html>

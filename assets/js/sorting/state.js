@@ -5,7 +5,9 @@ export const state = {
   running: false,
   algo: null,
   bucketCount: 5,
-  radixExp: 2
+  radixExp: 2,
+  waveform: 'square',
+  audioEnabled: true
 };
 
 export function setState(key, value) {

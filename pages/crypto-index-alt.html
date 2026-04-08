@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AlgoHub — Cipher Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/crypto-style-alt.css"/>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="../index.html" class="logo">ALGO<span>HUB</span></a>
+    <nav>
+      <a href="../pages/sort-index.html">Sorting</a>
+      <a href="../pages/crypto-index.html" class="active">Ciphers</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ── HERO ─────────────────────────────────────── -->
+    <section class="hero">
+      <div class="hero-label">CIPHER VISUALIZER</div>
+      <h1>Watch encryption<br/><em>happen in real time.</em></h1>
+      <p class="hero-sub">Select a classical cipher, type your message, and watch each character transform before your eyes.</p>
+    </section>
+
+    <!-- ── CONTROLS ──────────────────────────────────── -->
+    <section class="controls-panel">
+
+      <div class="control-group">
+        <label class="control-label" for="cipher-input">PLAINTEXT</label>
+        <input
+          type="text"
+          id="cipher-input"
+          class="text-input"
+          placeholder="Type your message..."
+          maxlength="40"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <div class="control-row">
+
+        <div class="control-group">
+          <label class="control-label" for="ciphers">CIPHER</label>
+          <select id="ciphers" class="select-input">
+            <option value="" disabled selected>— select —</option>
+            <optgroup label="Substitution">
+              <option value="caesar">Caesar Cipher</option>
+              <option value="affine">Affine Cipher</option>
+              <option value="hill">Hill Cipher</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="control-group" id="caesar-controls">
+          <label class="control-label" for="caesar-shift-slider">
+            SHIFT — <span id="caesar-shift-label">3</span>
+          </label>
+          <input type="range" id="caesar-shift-slider" min="1" max="25" value="3" class="slider"/>
+        </div>
+
+        <div class="control-group hidden" id="affine-controls">
+          <label class="control-label">AFFINE KEYS</label>
+          <div class="key-row">
+            <div>
+              <label class="control-label-sm" for="affine-a">a</label>
+              <select id="affine-a" class="select-input select-sm">
+                <option value="1">1</option><option value="3">3</option>
+                <option value="5" selected>5</option><option value="7">7</option>
+                <option value="9">9</option><option value="11">11</option>
+                <option value="15">15</option><option value="17">17</option>
+                <option value="19">19</option><option value="21">21</option>
+                <option value="23">23</option><option value="25">25</option>
+              </select>
+            </div>
+            <div>
+              <label class="control-label-sm" for="affine-b">b</label>
+              <input type="number" id="affine-b" class="select-input select-sm" min="0" max="25" value="8"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group hidden" id="hill-controls">
+          <label class="control-label">HILL MATRIX (2×2)</label>
+          <div class="matrix-grid">
+            <input type="number" id="hill-00" class="matrix-cell" value="2" min="0" max="25"/>
+            <input type="number" id="hill-01" class="matrix-cell" value="1" min="0" max="25"/>
+            <input type="number" id="hill-10" class="matrix-cell" value="5" min="0" max="25"/>
+            <input type="number" id="hill-11" class="matrix-cell" value="3" min="0" max="25"/>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="control-row">
+
+        <div class="control-group">
+          <label class="control-label" for="crypto-speed-slider">
+            SPEED — <span id="crypto-speed-label">50 ms</span>
+          </label>
+          <input type="range" id="crypto-speed-slider" min="10" max="300" value="50" class="slider"/>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">WAVEFORM</label>
+          <div class="waveform-buttons">
+            <button class="wave-btn active" data-wave="sine">sine</button>
+            <button class="wave-btn" data-wave="triangle">tri</button>
+            <button class="wave-btn" data-wave="square">sqr</button>
+            <button class="wave-btn" data-wave="sawtooth">saw</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">AUDIO</label>
+          <button id="btn-audio-toggle" class="toggle-btn active">ON</button>
+        </div>
+
+      </div>
+
+      <div class="action-row">
+        <button id="btn-run-cipher" class="btn-primary">ENCRYPT</button>
+        <button id="btn-reset" class="btn-secondary">RESET</button>
+        <div id="crypto-timer" class="timer-display">READY</div>
+      </div>
+
+    </section>
+
+    <!-- ── TILE VISUALIZER ────────────────────────────── -->
+    <section class="visualizer-section">
+
+      <div class="vis-header">
+        <span class="vis-label">INPUT</span>
+        <span class="vis-arrow">→</span>
+        <span class="vis-label">OUTPUT</span>
+      </div>
+
+      <div id="tile-container" class="tile-container">
+        <!-- tiles injected by JS -->
+      </div>
+
+      <div class="output-row">
+        <span class="output-label">CIPHERTEXT</span>
+        <div id="cipher-output" class="output-display">—</div>
+      </div>
+
+    </section>
+
+    <!-- ── ALGORITHM INFO ─────────────────────────────── -->
+    <section class="info-panel" id="info-panel">
+      <div class="info-header">
+        <span id="info-cipher-name" class="info-title">Select a cipher</span>
+        <span id="info-complexity" class="info-badge">—</span>
+      </div>
+      <p id="info-description" class="info-description">
+        Choose a cipher above to see how it works.
+      </p>
+      <div class="info-stats" id="info-stats"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>AlgoHub</span>
+    <span>Classical Cipher Visualizer</span>
+  </footer>
+
+  <script type="module" src="../assets/js/crypto/main.js"></script>
+</body>
+</html>

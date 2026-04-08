@@ -17,6 +17,10 @@ header {
   gap: 20px;
 }
 
+a {
+  text-decoration: none;
+}
+
 .header-text {
   color: rgb(150, 150, 180);
 }

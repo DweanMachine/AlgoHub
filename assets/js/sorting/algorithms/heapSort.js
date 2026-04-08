@@ -37,6 +37,7 @@ export async function heapSort() {
   
   // One by one extract an element from heap
   for (let i = n - 1; i > 0; i--) {
+    if (!state.running) return 0;
     [state.values[0], state.values[i]] = [state.values[i], state.values[0]]; // Move current root to end
     await swapBars(0, i);
     await heapify(i, 0); // Call max heapify on the reduced heap
