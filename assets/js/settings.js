@@ -14,7 +14,7 @@ export function initSettings() {
   const menu = document.getElementById('settings-menu');
   const wrapper = document.getElementById('settings-wrapper');
  
-  //open/close menu functions
+  //open & close menu functions
   function openMenu() {
     btn.classList.add('open');
     menu.classList.add('open');
@@ -26,7 +26,8 @@ export function initSettings() {
     menu.classList.remove('open');
     btn.setAttribute('aria-expanded', 'false');
   }
-  //
+  
+  //Toggle menu on button click [not working??]
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     menu.classList.contains('open') ? closeMenu() : openMenu();
@@ -34,10 +35,61 @@ export function initSettings() {
 
   //Close menu when clicking outside
   wrapper.addEventListener('click', (e) => {
-    if (menu.classList.contains('open') && !menu.contains(e.target)) {
+    if (!wrapper.contains(e.target)) {
       closeMenu();
     }
   });
+
+
+  const darkTheme = document.getElementById('theme-dark');
+  const lightTheme = document.getElementById('theme-light');
+  const defaultTheme = document.getElementById('theme-default');
+  darkTheme.addEventListener('click', (e) => {
+    state.theme = 'dark'; //Update global state
+    applyTheme(
+      'rgb(12,12,28)',
+      'rgb(220,224,248)',
+      'rgb(100,108,168)',
+      'rgb(60,65,110)',
+      'rgb(10,125,35)',
+      'rgb(165,10,10)',
+      'aquamarine');
+  });
+
+  lightTheme.addEventListener('click', (e) => {
+    state.theme = 'light'; //Update global state
+    applyTheme(
+      'rgb(170,170,200)',
+      'rgb(28,28,65)',  
+      'rgb(90,90,160)', 
+      'rgb(120,120,140)',
+      'rgb(105,185,105)',
+      'rgb(205,100,100)',
+      'rgb(70, 142, 142)');
+  });
+
+  defaultTheme.addEventListener('click', (e) => {
+    state.theme = 'default'; //Update global state
+    applyTheme(
+      'rgb(35,35,80)', 
+      'rgb(200,200,230)', 
+      'rgb(150,150,180)', 
+      'rgb(120,120,150)',
+      'rgb(10,135,35)',
+      'rgb(255,0,0)',
+      'aquamarine');
+  });
+
+  function applyTheme(bgColor, color, primary, secondary, completed, swapping, title) {
+    TransitionEvent ? document.documentElement.style.transition = 'var(--background-color) 3s, var(--color) 3s' : null;
+    document.documentElement.style.setProperty('--background-color', bgColor);
+    document.documentElement.style.setProperty('--color', color);
+    document.documentElement.style.setProperty('--primary-color', primary);
+    document.documentElement.style.setProperty('--secondary-color', secondary);
+    document.documentElement.style.setProperty('--completed', completed);
+    document.documentElement.style.setProperty('--swapping', swapping);
+    document.documentElement.style.setProperty('--title', title);
+  }
 
   //Choose waveform
   const waveformSelect = document.getElementById('waveform-select');

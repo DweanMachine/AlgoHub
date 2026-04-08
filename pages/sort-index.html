@@ -9,7 +9,7 @@
 </head>
 <body>
   <header>
-    <h1 style="color:white">ALGO<span style="color:aquamarine">HUB</span></h1>
+    <h1 style="color:white">ALGO<span style="color:var(--title)">HUB</span></h1>
     <a href=""><h3 class="header-text">Sorting</h3></a>
     <a href="crypto-index.html"><h3 class="header-text">Cryptography</h3></a>
     <!-- Settings Button and Menu -->
@@ -20,7 +20,8 @@
         <hr>
         <div class="settings-menu-item">
           <label for="theme-select">Theme:</label>
-          <button id="theme-light" value="light">Light</button>
+          <button id="theme-default" value="default" selected>Default</button>
+          <button id="theme-light" value="light" selected>Light</button>
           <button id="theme-dark" value="dark">Dark</button>
         </div>
         <hr>
@@ -72,7 +73,7 @@
     </div>
     <div id="bucket-slider-container" class="slider hidden">
       <label id="bucket-label" for="bucket-slider">Buckets: 5</label>
-      <input id="bucket-slider" type="range" value="5" min="2" max="12" step="1">
+      <input id="bucket-slider"  type="range" value="5" min="2" max="12" step="1">
     </div>
     <div id="radix-slider-container" class="slider hidden">
       <label id="radix-exp-label" for="radix-exp-slider">Exponent: 2</label>

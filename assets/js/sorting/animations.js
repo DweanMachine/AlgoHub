@@ -84,7 +84,8 @@ export async function markAllSorted(n) {
   for (let i = 0; i < n; i++) {
     const bar = getBar(i);
     if (bar) {
-      bar.style.backgroundColor = 'green';
+      //bar.classList.add('sorted');
+      bar.style.backgroundColor = 'var(--completed)';
       await sleep(Math.ceil(state.delay / 3));
     }
     playTone(state.values[i]); 
