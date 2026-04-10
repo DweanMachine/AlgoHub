@@ -26,14 +26,15 @@ const algorithms = {
 
 async function runSort() {
   elements.timer.textContent = 'Sorting...';
+  var t1, t0;
+  t0 = performance.now();
   
-  const t0 = performance.now();
   state.running = true;
   const algo = document.getElementById('algorithms').value;
   const sortFn = algorithms[algo];
   if (sortFn) { 
     await sortFn();
-    const t1 = performance.now();
+    t1 = performance.now();
   }
   if (state.running) {
     await markAllSorted(state.values.length);
