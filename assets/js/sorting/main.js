@@ -31,11 +31,15 @@ async function runSort() {
   state.running = true;
   const algo = document.getElementById('algorithms').value;
   const sortFn = algorithms[algo];
-  if (!sortFn) { alert("Select an algorithm!"); return; }
-  await sortFn();
-  const t1 = performance.now();
-
-  await markAllSorted(state.values.length);
+  if (sortFn) { 
+    await sortFn();
+    const t1 = performance.now();
+  }
+  if (state.running) {
+    await markAllSorted(state.values.length);
+    elements.timer.textContent = `Time Taken: ${((t1 - t0)/1000).toFixed(2)}s`;
+  } else {
+    elements.timer.textContent = 'Ready!';
+  }
   state.running = false;
-  elements.timer.textContent = `Time Taken: ${((t1 - t0)/1000).toFixed(2)}s`;
 }

@@ -53,19 +53,21 @@ export function initSettings() {
       'rgb(60,65,110)',
       'rgb(10,125,35)',
       'rgb(165,10,10)',
-      'aquamarine');
+      'aquamarine',
+      'rgb(132, 132, 152)');
   });
 
   lightTheme.addEventListener('click', (e) => {
     state.theme = 'light'; //Update global state
     applyTheme(
-      'rgb(170,170,200)',
+      'rgb(120,120,160)',
       'rgb(28,28,65)',  
-      'rgb(90,90,160)', 
-      'rgb(120,120,140)',
+      'rgb(60,60,120)', 
+      'rgb(90,90,140)',
       'rgb(105,185,105)',
       'rgb(205,100,100)',
-      'rgb(70, 142, 142)');
+      'rgb(60,110,110)',
+      'rgb(52, 52, 52)');
   });
 
   defaultTheme.addEventListener('click', (e) => {
@@ -77,10 +79,11 @@ export function initSettings() {
       'rgb(120,120,150)',
       'rgb(10,135,35)',
       'rgb(255,0,0)',
-      'aquamarine');
+      'aquamarine',
+      'rgb(100, 100, 130)');
   });
 
-  function applyTheme(bgColor, color, primary, secondary, completed, swapping, title) {
+  function applyTheme(bgColor, color, primary, secondary, completed, swapping, title, barOutline) {
     TransitionEvent ? document.documentElement.style.transition = 'var(--background-color) 3s, var(--color) 3s' : null;
     document.documentElement.style.setProperty('--background-color', bgColor);
     document.documentElement.style.setProperty('--color', color);
@@ -89,6 +92,7 @@ export function initSettings() {
     document.documentElement.style.setProperty('--completed', completed);
     document.documentElement.style.setProperty('--swapping', swapping);
     document.documentElement.style.setProperty('--title', title);
+    document.documentElement.style.setProperty('--barOutline', barOutline);
   }
 
   //Choose waveform

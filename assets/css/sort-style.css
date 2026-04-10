@@ -15,6 +15,7 @@
   --completed: rgb(10, 135, 35);
   --swapping: rgb(255, 0, 0);
   --title: rgb(127, 255, 212);
+  --barOutline: rgb(192, 192, 192); 
 }
 
 body {
@@ -135,7 +136,7 @@ h1 {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  width: 180px;
+  width: 220px;
   color: var(--background-color);
   background: var(--primary-color);
   border: 2px solid var(--secondary-color);
@@ -237,6 +238,7 @@ input[type="range"] {
   overflow: hidden;
   padding: 10px;
   border-radius: 3px;
+  background-color: var(--background-color);
 }
 
 .bucket {
@@ -249,6 +251,7 @@ input[type="range"] {
   
 
   background-color: var(--primary-color);
-  border: 1px solid var(--secondary-color);
+  border: 1px solid var(--color);
+  border-radius: 1px;
   height: 85px;
 }

@@ -44,18 +44,21 @@ export function generateValues(barCount) {
       label.textContent = val;
       bar.appendChild(label);
     } else {
-      bar.style.borderColor = 'rgb(120, 120, 150)';
+      bar.style.borderColor = 'var(--barOutline)';
     }
 
     elements.barContainer.appendChild(bar);
   }
+  //Resets timer & state on change
+  state.running = false;
+  elements.timer.textContent = 'Ready!';
 }
 
 
 //Sets up buckets used for bucket sort
 export function setUpBuckets(bucketCount) {
   elements.bucketContainer.innerHTML = '';
-  elements.bucketContainer.style.border = '1px solid #ccc';
+  elements.bucketContainer.style.border = '1px solid var(--color)';
   elements.bucketContainer.style.height = '85px';
 
   const bucketWidth = Math.floor(elements.bucketContainer.clientWidth / bucketCount);
@@ -86,12 +89,13 @@ export function updateSliderVisibility(algo) {
   if (algo === 'bucket') {
     elements.bucketContainer.classList.remove('hidden');
     elements.bucketContainer.innerHTML = '';
-    elements.barContainer.style.height = '320px';
+    elements.barContainer.style.height = '310px';
     setUpBuckets(state.bucketCount);
   } else {
     elements.bucketContainer.innerHTML = '';
     elements.bucketContainer.classList.add('hidden');
     elements.barContainer.style.height = '420px';
+    elements.bucketContainer.style.border = 'none';
     elements.bucketContainer.innerHTML = '';
     console.log('Hiding bucket container');
   }
