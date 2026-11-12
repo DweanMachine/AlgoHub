@@ -1,6 +1,6 @@
-import { state } from './sorting/state.js';
-
-export function initSettings() {
+//Settings menu shared by the sorting and cryptography pages.
+//Each page passes in its own state object so theme/audio changes land in the right place.
+export function initSettings(state) {
   //settings object to hold current values (Used later)
   /*const settings = {
     theme:        'dark',
@@ -34,7 +34,7 @@ export function initSettings() {
   });
 
   //Close menu when clicking outside
-  wrapper.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
     if (!wrapper.contains(e.target)) {
       closeMenu();
     }

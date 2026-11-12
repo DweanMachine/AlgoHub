@@ -11,6 +11,7 @@ export async function insertionSort() {
       [state.values[j+1], state.values[j]] = [state.values[j], state.values[j+1]];
       getBar(j).classList.add('swapping');
       await swapBars(j, j+1);
+      if (!state.running) return 0; //Cancelled while animating (the bars may no longer exist)
       getBar(j).classList.remove('swapping');
       j = j - 1;
     }

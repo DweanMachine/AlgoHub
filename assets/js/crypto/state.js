@@ -1,15 +1,22 @@
+//Lists global state variables
 export const state = {
   inputText:    '',
-  outputText:   '',
+  outputText:   '',   //Only set once a run has finished
+  mode:         'encrypt',   // 'encrypt' | 'decrypt'
   running:      false,
-  delay:        50,
+  runId:        0,    //Bumped whenever tiles are rebuilt, which cancels any run in flight
+  delay:        70,
+  waveform:     'sine',
   audioEnabled: true,
-  waveform:     'triangle',  // triangle fits crypto's mechanical feel better
-  cipher:       null,
+  volume:       0.5,
+  theme:        'default',
 
-  // Cipher-specific keys
-  caesarShift:  3,
-  affineA:      5,
-  affineB:      8,
-  hillMatrix:   [[2, 1], [5, 3]],
+  //Cipher keys, refreshed from the controls before each run
+  keys: {
+    caesarShift: 3,
+    affineA:     5,
+    affineB:     8,
+    hillMatrix:  [[3, 3], [2, 5]],
+    vigenereKey: 'LEMON',
+  },
 };

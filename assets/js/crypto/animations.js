@@ -1,46 +1,32 @@
 import { state } from './state.js';
-//import { playTone } from './audio.js';
+import { playTone } from './audio.js';
+import { setTile } from './dom.js';
 
+//Sleeps for a specified number of milliseconds
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function getTile(i) {
-  return document.getElementById('tile-' + i);
-}
-
-//Highlights the input character.
-export async function highlightTile(i) {
-  const tile = getTile(i);
-  if (!tile) return;
-
-  tile.classList.add('reading');
-  //playTone(tile.dataset.charCode, 200, 800);
+//Highlights the tiles about to be encrypted/decrypted
+export async function readTiles(tiles) {
+  tiles.forEach(tile => {
+    tile.classList.add('reading');
+    playTone(Number(tile.dataset.value));
+  });
   await sleep(state.delay);
-  tile.classList.remove('reading');
+  tiles.forEach(tile => tile.classList.remove('reading'));
 }
 
-//Updates a tile to show its transformed output character.
-export async function transformTile(i, newChar) {
-  const tile = getTile(i);
-  if (!tile) return;
-
-  tile.classList.add('transforming');
-  //playTone(newChar.charCodeAt(0), 400, 1200);
+//Swaps each tile's letter for its transformed value, then marks it done (green)
+export async function transformTiles(tiles, values) {
+  tiles.forEach((tile, i) => {
+    tile.classList.add('transforming');
+    playTone(values[i]);
+  });
   await sleep(state.delay);
-
-  tile.textContent = newChar;
-  tile.dataset.charCode = newChar.charCodeAt(0);
-  tile.classList.remove('transforming');
-  tile.classList.add('transformed');
-}
-
-//Resets all tiles back to unprocessed state.
-export function resetTiles(n) {
-  for (let i = 0; i < n; i++) {
-    const tile = getTile(i);
-    if (tile) {
-      tile.classList.remove('reading', 'transforming', 'transformed');
-    }
-  }
+  tiles.forEach((tile, i) => {
+    setTile(tile, values[i]);
+    tile.classList.remove('transforming');
+    tile.classList.add('transformed');
+  });
 }

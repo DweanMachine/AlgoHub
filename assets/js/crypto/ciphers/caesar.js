@@ -1,20 +1,14 @@
-import { state } from '../state.js';
-import { highlightTile, transformTile } from '../animations.js';
+import { mod } from './math.js';
 
-export async function caesarCipher(shift = state.caesarShift) {
-  const text = state.inputText;
+export const caesar = {
+  name: 'Caesar Cipher',
+  blockSize: 1,
+  description: 'Shifts every letter a fixed number of places along the alphabet. Simple, but with only 25 possible keys it falls to brute force instantly.',
 
-  for (let i = 0; i < text.length; i++) {
-    if (!state.running) return;
+  readKey: ({ caesarShift }) => ({ key: caesarShift }),
 
-    await highlightTile(i);
+  transform: ([x], shift, decrypt) => [mod(decrypt ? x - shift : x + shift)],
 
-    const char = text[i];
-    if (/[A-Z]/.test(char)) {
-      const shifted = String.fromCharCode(
-        ((char.charCodeAt(0) - 65 + shift) % 26) + 65
-      );
-      await transformTile(i, shifted);
-    }
-  }
-}
+  formula: (shift, decrypt) =>
+    decrypt ? `D(x) = (x − ${shift}) mod 26` : `E(x) = (x + ${shift}) mod 26`,
+};

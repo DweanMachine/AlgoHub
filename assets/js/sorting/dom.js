@@ -9,6 +9,8 @@ export const elements = {
   speedSlider:     document.getElementById('speed-slider'),
   bucketSlider:    document.getElementById('bucket-slider'),
   expSlider:       document.getElementById('radix-exp-slider'),
+  sortButton:      document.getElementById('chosen-sort'),
+  algorithmSelect: document.getElementById('algorithms'),
 };
 
 //Generates a random integer between min and max (inclusive)
@@ -20,18 +22,26 @@ function getRandomInt(min, max) {
 
 //Generates a new set of random values
 export function generateValues(barCount) {
-  elements.barContainer.replaceChildren();
-  state.values = [];
-
+  state.values = Array.from({length: Number(barCount)}, () => getRandomInt(1, 100));
   document.getElementById('bar-count-label').textContent = `Bars: ${barCount}`;
+  drawBars();
 
+  //Resets timer & state on change (this also cancels any sort in progress)
+  state.running = false;
+  setStatus('Ready!');
+}
+
+//Rebuilds every bar from state.values.
+//Also used to tidy up after a stopped sort, which can leave bars inside buckets or out of sync.
+export function drawBars() {
+  elements.barContainer.replaceChildren();
+  elements.bucketContainer.querySelectorAll('.bucket').forEach(bucket => bucket.replaceChildren());
+
+  const barCount = state.values.length;
   const containerWidth = elements.barContainer.clientWidth || 1080;
   const barWidth = Math.max(4, Math.floor(containerWidth / barCount));
 
-  for (let i = 0; i < barCount; i++) {
-    const val = getRandomInt(1, 100);
-    state.values.push(val);
-
+  state.values.forEach((val, i) => {
     const bar = document.createElement('div');
     bar.id = `bar-${i}`;
     bar.classList.add('bar');
@@ -48,12 +58,21 @@ export function generateValues(barCount) {
     }
 
     elements.barContainer.appendChild(bar);
-  }
-  //Resets timer & state on change
-  state.running = false;
-  elements.timer.textContent = 'Ready!';
+  });
 }
 
+//Writes to the status line next to the controls
+export function setStatus(text, isError = false) {
+  elements.timer.textContent = text;
+  elements.timer.classList.toggle('error', isError);
+}
+
+//Locks the controls that would corrupt a sort in progress
+export function setControlsLocked(locked) {
+  elements.algorithmSelect.disabled = locked;
+  elements.bucketSlider.disabled = locked;
+  elements.expSlider.disabled = locked;
+}
 
 //Sets up buckets used for bucket sort
 export function setUpBuckets(bucketCount) {
@@ -102,7 +121,7 @@ export function updateSliderVisibility(algo) {
 }
 
 //Initializes event listeners for all controls
-export function initControls(onRunSort) {
+export function initControls(onToggleSort, onAlgorithmChange) {
   adjustDelay();
   generateValues(elements.barSlider.value);
 
@@ -126,17 +145,14 @@ export function initControls(onRunSort) {
 
   document.getElementById('btn-generate').addEventListener('click', () => {
     generateValues(elements.barSlider.value);
-    elements.timer.textContent = 'Ready!';
-    state.running = false;
   });
 
-  document.getElementById('chosen-sort').addEventListener('click', () => {
-    if (state.running) { return; }
-    onRunSort();
-  });
+  //The same button starts and stops a sort
+  elements.sortButton.addEventListener('click', onToggleSort);
 
   //Show/hide algorithm specific elements
-  document.getElementById('algorithms').addEventListener('change', (e) => {
+  elements.algorithmSelect.addEventListener('change', (e) => {
     updateSliderVisibility(e.target.value);
+    onAlgorithmChange();
   });
 }

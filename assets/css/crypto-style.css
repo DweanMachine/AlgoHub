@@ -1,68 +1,275 @@
-@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+/* Cryptography page styles.
+   The shared base (theme variables, header, buttons, sliders, settings menu) lives in sort-style.css,
+   so every color here uses the same variables and follows the Default / Light / Dark themes. */
 
-*{
-  font-family: "Fjalla One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-
-body {
-  background-color: rgb(30, 58, 95);
+/* ---- Key controls ---- */
+#affine-a {
+  cursor: pointer;
+  background-color: var(--background-color);
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 5px;
 }
 
-header {
+.key-group {
+  display: flex;
+  align-items: flex-end;
+}
+
+#vigenere-key {
+  width: 130px;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--background-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  color: var(--color);
+  outline: none;
+}
+
+#vigenere-key:focus {
+  border-color: var(--title);
+}
+
+/* Must win over display rules like .key-group, whatever order the stylesheets load in */
+.hidden {
+  display: none !important;
+}
+
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(2, 42px);
+  gap: 4px;
+}
+
+.matrix input {
+  width: 42px;
+  box-sizing: border-box;
+  padding: 2px 4px;
+  text-align: center;
+  font-size: 14px;
+  background: var(--background-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  color: var(--color);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.matrix input::-webkit-inner-spin-button,
+.matrix input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.matrix input:focus {
+  border-color: var(--title);
+}
+
+#timer.error {
+  color: var(--swapping);
+  font-size: 110%;
+}
+
+/* ---- Text input ---- */
+#text-row {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 0.75rem;
 }
 
-a {
-  text-decoration: none;
+#input-label,
+#output-label {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--primary-color);
+  min-width: 96px;
 }
 
-.header-text {
-  color: rgb(150, 150, 180);
+#cipher-input {
+  flex: 1;
+  max-width: 720px;
+  padding: 6px 10px;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  background: var(--background-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  color: var(--color);
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
-.header-text:hover {
-  color: white;
-  cursor:pointer;
+#cipher-input:focus {
+  border-color: var(--title);
 }
 
-hr {
-  color: rgb(120, 120, 150);
+#cipher-input::placeholder {
+  color: var(--secondary-color);
 }
 
-label {
-  font-size: 16px;
-  color: white;
+/* ---- Tiles ---- */
+#tile-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  min-height: 150px;
+  margin-top: 10px;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: var(--primary-color);
+  border: 2px solid var(--secondary-color);
+  border-radius: 3px;
+  transition: border-color 0.5s ease;
 }
 
-h1 {
-  font-size: 250%;
+#tile-container.done {
+  border-color: var(--completed);
 }
 
-textarea {
-  border: 2px solid rgb(120, 120, 150);
-  background-color: rgb(150, 150, 180);
-  color: rgb(30, 58, 95);
-  width: 99.4%;
-  max-width: 99.4%;
-  height: 16px;
-  max-height: 48px;
-  margin-bottom: 6px;
-  text-transform: uppercase;
+#tile-container:empty::before {
+  content: 'Type a message to begin';
+  margin: auto;
+  color: var(--background-color);
+  opacity: 0.6;
+  font-size: 14px;
+  letter-spacing: 0.06em;
 }
 
-#algorithms {
-  margin-right: 15px;
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 54px;
+  height: 70px;
+  background-color: var(--background-color);
+  border: 1px solid lavender;
+  border-radius: 3px;
+  color: var(--color);
+  font-size: 26px;
+  white-space: pre;
+  user-select: none;
+  transition: transform 0.15s ease, background-color 0.15s ease,
+              border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-#ciphertext {
+.tile-num {
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Spaces just leave a gap; punctuation is dimmed because ciphers leave it alone */
+.tile.space {
+  width: 24px;
+  background: transparent;
+  border-color: transparent;
+}
+
+.tile.symbol {
+  opacity: 0.55;
+}
+
+.tile.pad {
+  border-style: dashed;
+}
+
+/* Being read */
+.tile.reading {
+  transform: translateY(-6px);
+  box-shadow: 0 0 0 3px var(--title);
+}
+
+/* Mid-transformation */
+.tile.transforming {
+  background-color: var(--swapping);
   color: silver;
+  transform: translateY(-6px) scale(1.08);
 }
 
-#encrypt-button {
-  margin-right: 6px;
+/* Finished */
+.tile.transformed {
+  background-color: var(--completed);
+  border-color: var(--completed);
+  color: white;
+}
+
+/* ---- Output ---- */
+#output-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 14px;
+}
+
+#cipher-output {
+  min-height: 32px;
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  color: var(--title);
+  word-break: break-all;
+}
+
+/* ---- Info panel ---- */
+#info-panel {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 2px solid var(--secondary-color);
+  border-radius: 3px;
+}
+
+#info-name {
+  margin: 0 0 6px;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  color: var(--title);
+}
+
+#info-description {
+  max-width: 760px;
+  margin: 0;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color);
+}
+
+#info-formula {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 14px;
+  color: var(--primary-color);
+  border: 1px solid var(--secondary-color);
+  border-radius: 3px;
+}
+
+#info-formula.error {
+  color: var(--swapping);
+  border-color: var(--swapping);
+}
+
+@media (max-width: 640px) {
+  #text-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tile {
+    width: 42px;
+    height: 58px;
+    font-size: 20px;
+  }
 }

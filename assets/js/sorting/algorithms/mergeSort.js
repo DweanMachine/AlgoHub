@@ -35,19 +35,21 @@ async function merge(left, mid, right) {
 
     // Copy the remaining elements of leftArr[], if there are any
     while (i < leftSize) {
+        if (!state.running) return 0;
         state.values[k] = leftArr[i++];
         await refreshBar(k++);
     }
 
     // Copy the remaining elements of rightArr[], if there are any
     while (j < rightSize) {
+        if (!state.running) return 0;
         state.values[k] = rightArr[j++];
         await refreshBar(k++);
     }
 }
 
 export async function mergeSort(left, right) {
-    if (left >= right)
+    if (left >= right || !state.running)
         return;
     const mid = Math.floor(left + (right - left) / 2);
 

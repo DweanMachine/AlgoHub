@@ -4,36 +4,125 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AlgoHub</title>
+  <!-- sort-style.css provides the shared base (theme colors, header, buttons, sliders, settings menu) -->
+  <link rel="stylesheet" href="../assets/css/sort-style.css">
   <link rel="stylesheet" href="../assets/css/crypto-style.css">
+  <script src="https://kit.fontawesome.com/ee13ff4682.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <header>
-    <h1 style="color:white">ALGO<span style="color:aquamarine">HUB</span></h1>
+    <h1 style="color:white">ALGO<span style="color:var(--title)">HUB</span></h1>
     <a href="sort-index.html"><h3 class="header-text">Sorting</h3></a>
     <a href=""><h3 class="header-text">Cryptography</h3></a>
+    <!-- Settings Button and Menu -->
+    <div class="settings-wrapper" id="settings-wrapper">
+      <i class="fa-solid fa-gear" id="settings-btn" aria-label="Settings" aria-expanded="false"></i>
+      <div class="settings-menu" id="settings-menu" role="dialog" aria-label="Settings">
+        <div class="settings-menu-header">SETTINGS</div>
+        <hr>
+        <div class="settings-menu-item">
+          <label for="theme-default">Theme:</label>
+          <button id="theme-default" value="default" selected>Default</button>
+          <button id="theme-light" value="light" selected>Light</button>
+          <button id="theme-dark" value="dark">Dark</button>
+        </div>
+        <hr>
+        <div class="waveform">
+          <label for="waveform-select">Waveform:</label>
+          <select id="waveform-select">
+            <option value="sine" selected>Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+        </div>
+        <hr>
+        <div class="settings-menu-item">
+          <label for="volume-slider">Volume:</label>
+          <br>
+          <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+          <input id="volume-slider" type="range" value="50" min="0" max="100" step="1">
+        </div>
+      </div>
+    </div>
   </header>
+
   <hr>
-  <label for="plaintext" id="plain-label">PlainText:</label>
-  <textarea id="plaintext"></textarea>
   <div id="config">
     <select id="algorithms">
-      <option selected disabled>Select Algorithm:</option>
-      <option id="caesar-cipher" value="caesar">Caesar Cipher</option>
+      <option value="caesar" selected>Caesar Cipher</option>
+      <option value="affine">Affine Cipher</option>
+      <option value="hill">Hill Cipher</option>
+      <option value="vigenere">Vigenère Cipher</option>
+      <option value="atbash">Atbash Cipher</option>
     </select>
-    
-    <button id="encrypt-button">Encrypt</button>
-    <label for="encryptSwap">Decryption Mode:</label>
-    <input id="encryptSwap" type="checkbox">
 
-    <label>Shift:</label>
-    <input id="caesarShift" type="number" min="0" max="25"></input>
-    
-    <label>Mult:</label>
-    <input id="affineShift" type="number" min="0" max="25"></input>
+    <button id="btn-mode">Mode: Encrypt</button>
+    <button id="chosen-cipher">Encrypt</button>
+
+    <!-- Cipher specific keys: only the selected cipher's controls are shown -->
+    <div id="caesar-controls" class="slider">
+      <label id="caesar-shift-label" for="caesar-shift-slider">Shift: 3</label>
+      <input id="caesar-shift-slider" type="range" value="3" min="1" max="25" step="1">
+    </div>
+
+    <div id="affine-controls" class="key-group hidden">
+      <div class="slider">
+        <label id="affine-a-label" for="affine-a-slider">b: 8</label>
+        <input id="affine-a-slider" type="range" value="3" min="1" max="25" step="2">
+      </div>
+      <div class="slider">
+        <label id="affine-b-label" for="affine-b-slider">b: 8</label>
+        <input id="affine-b-slider" type="range" value="8" min="0" max="25" step="1">
+      </div>
+    </div>
+
+    <div id="hill-controls" class="slider hidden">
+      <label>Key Matrix:</label>
+      <div class="matrix">
+        <input id="hill-00" type="number" value="3" min="0" max="25" step="1" aria-label="Row 1, column 1">
+        <input id="hill-01" type="number" value="3" min="0" max="25" step="1" aria-label="Row 1, column 2">
+        <input id="hill-10" type="number" value="2" min="0" max="25" step="1" aria-label="Row 2, column 1">
+        <input id="hill-11" type="number" value="5" min="0" max="25" step="1" aria-label="Row 2, column 2">
+      </div>
+    </div>
+
+    <div id="vigenere-controls" class="slider hidden">
+      <label for="vigenere-key">Keyword:</label>
+      <input id="vigenere-key" type="text" value="LEMON" maxlength="16" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="slider">
+      <label id="speed-label" for="speed-slider">Delay: 70 ms</label>
+      <input id="speed-slider" type="range" value="70" min="0" max="160" step="5">
+    </div>
+
+    <button id="btn-swap" title="Move the result into the input and flip the mode" disabled>Use Output as Input</button>
+
+    <div id="timer-config">
+      <h2 id="timer">Ready!</h2>
+    </div>
   </div>
-  <hr></hr>
-  <label for="ciphertext" id="cipher-label">CipherText:</label>
-  <h3 id="ciphertext"></h3>
+
+  <div id="text-row">
+    <label id="input-label" for="cipher-input">Plaintext:</label>
+    <input id="cipher-input" type="text" value="HELLO WORLD" placeholder="Type your message..."
+           maxlength="60" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div id="tile-container"></div>
+
+  <div id="output-row">
+    <label id="output-label">Ciphertext:</label>
+    <div id="cipher-output">—</div>
+  </div>
+
+  <div id="info-panel">
+    <h3 id="info-name"></h3>
+    <p id="info-description"></p>
+    <code id="info-formula"></code>
+  </div>
+
   <script type="module" src="../assets/js/crypto/main.js"></script>
 </body>
 </html>

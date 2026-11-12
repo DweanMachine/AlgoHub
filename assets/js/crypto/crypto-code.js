@@ -2,26 +2,8 @@ function caesarCipher(text, shift) {
   let result=""
   for (let i = 0; i < text.length; i++) {
     let char = text[i];
-    if (char == " ") { result += " "; continue;}
-    if (char == '\n') { result += '\n'; continue;}
-    
-    let decrypt = 1;
-    if (encryptSwap.checked) {
-      decrypt = -1;
-    } 
-
-    let ch = ((convertCharToInt(char) + shift * decrypt) % 26 + 26) % 26 + 65;
-    result += String.fromCharCode(ch);
-  }
-  return result;
-}
-
-function caesarCipher(text, shift) {
-  let result=""
-  for (let i = 0; i < text.length; i++) {
-    let char = text[i];
-    if (char == " ") { result += " "; continue;}
-    if (char == '\n') { result += '\n'; continue;}
+    if (char === " ") { result += " "; continue;}
+    if (char === '\n') { result += '\n'; continue;}
     
     let decrypt = 1;
     if (encryptSwap.checked) {
@@ -37,8 +19,7 @@ function caesarCipher(text, shift) {
 function convertCharToInt(char) {
   const isUpper = char === char.toUpperCase();   // toUpperCase() takes no args
   const base = isUpper ? 65 : 97;   // 65 = 'A', 97 = 'a'
-  const encryptedVal = char.charCodeAt(0) - base;
-  return encryptedVal;
+  return char.charCodeAt(0) - base;
 }
 
 const plaintext = document.getElementById('plaintext');

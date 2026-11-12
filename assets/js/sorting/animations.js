@@ -82,6 +82,7 @@ export async function refreshBar(i) {
 //Marks all bars as sorted (green)
 export async function markAllSorted(n) {
   for (let i = 0; i < n; i++) {
+    if (!state.running) return;
     const bar = getBar(i);
     if (bar) {
       //bar.classList.add('sorted');

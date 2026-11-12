@@ -19,7 +19,7 @@
         <div class="settings-menu-header">SETTINGS</div>
         <hr>
         <div class="settings-menu-item">
-          <label for="theme-select">Theme:</label>
+          <label for="theme-default">Theme:</label>
           <button id="theme-default" value="default" selected>Default</button>
           <button id="theme-light" value="light" selected>Light</button>
           <button id="theme-dark" value="dark">Dark</button>
@@ -49,7 +49,7 @@
   <hr>
   <div id="config">
     <select id="algorithms">
-      <option selected disabled>Select Algorithm:</option>
+      <option value="" selected disabled>Select Algorithm:</option>
       <option id="bubble-sort" value="bubble">Bubble Sort</option>
       <option id="insertion-sort" value="insert">Insertion Sort</option>
       <option id="selection-sort" value="select">Selection Sort</option>
@@ -62,7 +62,7 @@
       <option id="bogo-sort" value="bogo">Bogo Sort</option>
     </select>
 
-    <button id="chosen-sort">Sort</button>
+    <button id="chosen-sort" disabled title="Select an algorithm first">Sort</button>
     <div class="slider">
       <label id="bar-count-label" for="bar-slider">Bars: 30</label>
       <input id="bar-slider" type="range" value="30" min="3" max="300" step="1">
@@ -87,7 +87,7 @@
   </div>
   
   <div id="container"></div>
-  <div id="bucketContainer"></div>
+  <div id="bucketContainer" class="hidden"></div>
   
   <script type="module" src="../assets/js/sorting/main.js"></script>
 </body>

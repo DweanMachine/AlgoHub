@@ -21,10 +21,11 @@ export async function partition(low, high) {
 // the QuickSort function implementation
 export async function quickSort(low, high)
 {
-    if (low < high) {
+    if (low < high && state.running) {
 
         // pi is the partition return index of pivot
         let pi = await partition(low, high);
+        if (!state.running) return; //A stopped partition returns 0, which would otherwise recurse forever
 
         // recursion calls for smaller elements
         // and greater or equals elements

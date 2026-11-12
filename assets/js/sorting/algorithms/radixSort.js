@@ -44,8 +44,10 @@ async function heapCountSort(exp) {
 // The main function to that sorts arr[] using Radix Sort
 export async function radixSort() {
   const maxNumber = await getMax();
+  if (!state.running) return;
 
   for (let exp = 1; Math.floor(maxNumber / exp) > 0; exp *= Number(elements.expSlider.value)) {
+    if (!state.running) return;
     // Get the Count sort iteration
     const sortedIteration = await heapCountSort(exp);
     state.values = sortedIteration;
