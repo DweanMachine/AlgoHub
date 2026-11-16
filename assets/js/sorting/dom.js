@@ -47,14 +47,16 @@ export function drawBars() {
     bar.classList.add('bar');
     bar.style.height = `${Math.max(3, val)}%`;
     bar.style.width = `${barWidth}px`;
-
     if (barCount < 80) {
       const label = document.createElement('span');
       label.classList.add('bar-label');
       label.textContent = val;
       bar.appendChild(label);
-    } else {
-      bar.style.borderColor = 'var(--barOutline)';
+    } else if (barCount < 160) {
+      bar.style.borderColor = `var(--barOutline)`;
+    }
+    else {
+      bar.style.borderColor = 'rgb(55,55,100)';
     }
 
     elements.barContainer.appendChild(bar);
